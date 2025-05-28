@@ -15,6 +15,8 @@ class Fridge {
 
 // ✅ 냉장고 탭 페이지
 class FridgePage extends StatefulWidget {
+  const FridgePage({super.key});
+
   @override
   State<FridgePage> createState() => _FridgePageState();
 }
@@ -165,7 +167,7 @@ class _FridgePageState extends State<FridgePage> {
 class FridgeDetailPage extends StatelessWidget {
   final Fridge fridge;
 
-  const FridgeDetailPage({required this.fridge});
+  const FridgeDetailPage({super.key, required this.fridge});
 
   @override
   Widget build(BuildContext context) {

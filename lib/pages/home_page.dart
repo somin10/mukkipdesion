@@ -7,6 +7,8 @@ import 'my_muckip_page.dart';
 import 'fridge_page.dart'; // 냉장고 페이지 (너가 나중에 추가할 수 있음)
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }

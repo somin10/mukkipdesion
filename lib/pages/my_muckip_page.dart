@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MyMuckipPage extends StatelessWidget {
+  const MyMuckipPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
