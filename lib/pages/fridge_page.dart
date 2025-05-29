@@ -6,12 +6,14 @@ class Fridge {
   final int itemCount;
   final int nearExpiry;
   bool isFavorite;
+  Color color;
 
   Fridge({
     required this.name,
     required this.itemCount,
     required this.nearExpiry,
     this.isFavorite = false,
+    this.color = const Color(0xFFF3F4F6),
   });
 }
 
@@ -91,6 +93,333 @@ class _FridgePageState extends State<FridgePage> {
               ),
             ],
           ),
+    );
+  }
+
+  void _showMoreMenu(BuildContext context, int index) {
+    final fridge = fridgeList[index];
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 상단 핸들
+              Container(
+                width: 40,
+                height: 4,
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Color(0xFFE5E5E5),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // 메뉴 아이템들
+              ListTile(
+                leading: Icon(Icons.settings, color: Color(0xFF111111)),
+                title: Text(
+                  '냉장고 관리',
+                  style: TextStyle(
+                    color: Color(0xFF111111),
+                    fontSize: 16,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  print('냉장고 관리: ${fridge.name}');
+                  // TODO: 냉장고 관리 페이지로 이동
+                },
+              ),
+
+              ListTile(
+                leading: Icon(Icons.color_lens, color: Color(0xFF111111)),
+                title: Text(
+                  '색상 설정',
+                  style: TextStyle(
+                    color: Color(0xFF111111),
+                    fontSize: 16,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showColorDialog(index);
+                },
+              ),
+
+              ListTile(
+                leading: Icon(Icons.delete_outline, color: Color(0xFFFF3B30)),
+                title: Text(
+                  '삭제하기',
+                  style: TextStyle(
+                    color: Color(0xFFFF3B30),
+                    fontSize: 16,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showDeleteConfirmDialog(index);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmDialog(int index) {
+    final fridge = fridgeList[index];
+
+    showDialog(
+      context: context,
+      barrierColor: Color(0x80000000), // 50% 투명도의 검정색 배경
+      builder:
+          (context) => Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              width: 352,
+              padding: EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 26),
+                  Column(
+                    children: [
+                      Text(
+                        '정말로 삭제하시겠습니까?',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFFFF6640),
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 4.85),
+                      Text(
+                        '삭제한 냉장고는 복원할 수 없습니다!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF757575),
+                          fontSize: 14,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          height:
+                              1.71, // line height: 24px / font size: 14px = 1.71
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    children: [
+                      // 취소하기 버튼
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFE6E6E6),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '취소하기',
+                                style: TextStyle(
+                                  color: Color(0xFF808080),
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      // 삭제하기 버튼
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              fridgeList.removeAt(index);
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFF6640),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '삭제하기',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
+
+  void _showColorDialog(int index) {
+    final fridge = fridgeList[index];
+    // 임시 선택 색상을 저장할 변수
+    Color selectedColor = fridge.color;
+
+    final List<Color> colorOptions = [
+      Color(0xFFF3F4F6), // 기본 회색
+      Color(0xFFFFD8D8), // 연한 빨강
+      Color(0xFFFFDFAA), // 연한 주황
+      Color(0xFFFCFF97), // 연한 노랑
+      Color(0xFFB3FFA1), // 연한 녹색
+      Color(0xFFC8FF82), // 연한 라임
+      Color(0xFFCAF7FF), // 연한 파랑
+      Color(0xFFC8CFFF), // 연한 보라
+      Color(0xFFF2DBFF), // 연한 자주
+      Color(0xFFFFD7F0), // 연한 분홍
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(30),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 제목
+                  Center(
+                    child: Text(
+                      '냉장고의 색상을 선택해주세요',
+                      style: TextStyle(
+                        color: Color(0xFF111111),
+                        fontSize: 20,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 30),
+
+                  // 색상 옵션 그리드
+                  Center(
+                    child: Wrap(
+                      spacing: 17,
+                      runSpacing: 17,
+                      children:
+                          colorOptions.map((color) {
+                            final isSelected = selectedColor == color;
+                            return GestureDetector(
+                              onTap: () {
+                                // 색상 선택만 임시 저장 (아직 적용하지 않음)
+                                setModalState(() {
+                                  selectedColor = color;
+                                });
+                              },
+                              child: Container(
+                                width: 37,
+                                height: 37,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Color(0xFFD9D9D9),
+                                    width: 1,
+                                  ),
+                                ),
+                                child:
+                                    isSelected
+                                        ? Center(
+                                          child: Icon(
+                                            Icons.check,
+                                            color: Color(0xFF323232),
+                                            size: 16,
+                                          ),
+                                        )
+                                        : null,
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                  ),
+
+                  SizedBox(height: 30),
+
+                  // 확인 버튼
+                  InkWell(
+                    onTap: () {
+                      // 확인 버튼 클릭 시에만 색상 적용
+                      setState(() {
+                        fridgeList[index].color = selectedColor;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF4BB200),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '확인',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -295,8 +624,7 @@ class _FridgePageState extends State<FridgePage> {
                                   );
                                 },
                                 onMore: () {
-                                  // TODO: 더보기 메뉴 표시
-                                  print('더보기: ${fridge.name}');
+                                  _showMoreMenu(context, index);
                                 },
                               );
                             }).toList(),
@@ -386,7 +714,7 @@ class FridgeCard extends StatelessWidget {
         width: 176,
         height: 150,
         decoration: BoxDecoration(
-          color: Color(0xFFF3F4F6),
+          color: fridge.color,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Stack(
@@ -411,24 +739,24 @@ class FridgeCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 3),
                     // 유통기한 임박 식재료 수 표시 (조건부)
                     if (fridge.nearExpiry > 0)
                       Text(
                         '유통기한 임박 ${fridge.nearExpiry}개',
                         style: TextStyle(
                           color: Color(0xFFFF6640),
-                          fontSize: 13,
+                          fontSize: 12,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                    if (fridge.nearExpiry > 0) SizedBox(height: 5),
+                    if (fridge.nearExpiry > 0) SizedBox(height: 2),
                     Text(
                       '식재료 ${fridge.itemCount}개',
                       style: TextStyle(
                         color: Color(0xFF808080),
-                        fontSize: 13,
+                        fontSize: 12,
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w400,
                       ),
@@ -440,20 +768,27 @@ class FridgeCard extends StatelessWidget {
 
             // 즐겨찾기 버튼
             Positioned(
-              left: 20,
-              top: 110.98,
-              child: GestureDetector(
-                onTap: onFavorite,
-                child: SizedBox(
-                  width: 20,
-                  height: 19.02,
-                  child: Icon(
-                    fridge.isFavorite ? Icons.star : Icons.star_border,
-                    color:
-                        fridge.isFavorite
-                            ? Color(0xFFFFDE00)
-                            : Color(0xFFB2B2B2),
-                    size: 20,
+              left: 15,
+              top: 105,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onFavorite,
+                  borderRadius: BorderRadius.circular(15),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(shape: BoxShape.circle),
+                    child: Center(
+                      child: Icon(
+                        fridge.isFavorite ? Icons.star : Icons.star_border,
+                        color:
+                            fridge.isFavorite
+                                ? Color(0xFFFFDE00)
+                                : Color(0xFFB2B2B2),
+                        size: 20,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -461,41 +796,52 @@ class FridgeCard extends StatelessWidget {
 
             // 더보기 버튼
             Positioned(
-              left: 152,
-              top: 20,
-              child: GestureDetector(
-                onTap: onMore,
-                child: SizedBox(
-                  width: 4,
-                  height: 16,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
+              left: 142,
+              top: 10,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onMore,
+                  borderRadius: BorderRadius.circular(15),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(shape: BoxShape.circle),
+                    child: Center(
+                      child: SizedBox(
                         width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF5A5A5A),
-                          shape: BoxShape.circle,
+                        height: 16,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF5A5A5A),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF5A5A5A),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF5A5A5A),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Container(
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF5A5A5A),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Container(
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF5A5A5A),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
