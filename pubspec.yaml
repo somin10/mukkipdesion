@@ -9,9 +9,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.7
-  google_maps_flutter: ^2.5.0 # SVG 아이콘 사용을 위한 패키지
+  # 위치 서비스
+  location: ^5.0.0
+  geolocator: ^9.0.2
+  # 상태 관리
+  provider: ^6.0.0
+  # HTTP 요청
+  http: ^1.1.0
+  # 권한 관리
+  permission_handler: ^11.0.0
+  # 하단 시트
+  sliding_up_panel: ^2.0.0+1
+  # 이미지 처리
+  cached_network_image: ^3.3.0
+  # 지도 클러스터링 - 다른 패키지 사용
+  maps_toolkit: ^2.0.1
+  flutter_naver_map: ^1.0.2
+  dio: ^5.4.0
+  lottie: ^2.6.0
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +40,4 @@ flutter:
 
   assets:
     - assets/icons/
+    - assets/markers/
