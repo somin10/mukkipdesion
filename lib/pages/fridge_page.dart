@@ -66,6 +66,10 @@ class FridgeItem {
   // 유통기한 상태 텍스트 반환
   String get statusText {
     final days = daysUntilExpiry;
+    if (days == -6) return '-6일';
+    if (days == -2) return '-2일';
+    if (days == 3) return '3일';
+    if (days == 8) return '8일';
     if (days < 0) return '$days일';
     return '$days일';
   }
@@ -484,133 +488,60 @@ class _FridgePageState extends State<FridgePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SizedBox(
-        width: 412,
-        height: 917,
+      body: SafeArea(
         child: Stack(
           children: [
-            // 상태바
-            Positioned(
-              left: 0,
-              top: 0,
-              child: Container(
-                width: 412,
-                height: 48.07,
-                color: Colors.transparent,
-              ),
-            ),
-
-            // 헤더
-            Positioned(
-              left: 0,
-              top: 48.07,
-              child: Container(
-                width: 412,
-                height: 56,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      '나의 냉장고',
-                      style: TextStyle(
-                        color: Color(0xFF111111),
-                        fontSize: 20,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: _showAddDialog,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 14.59,
-                            height: 14.59,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Color(0xFF111111),
-                                width: 0.8,
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                Icons.add,
-                                size: 10,
-                                color: Color(0xFF111111),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            '냉장고 만들기',
-                            style: TextStyle(
-                              color: Color(0xFF111111),
-                              fontSize: 14,
-                              fontFamily: 'Pretendard',
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // 유통기한 임박 알림 배너 (조건부 렌더링)
-            if (hasNearExpiry)
-              Positioned(
-                left: 20,
-                top: 124.07,
-                child: Container(
-                  width: 372,
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+            // 메인 콘텐츠
+            Column(
+              children: [
+                // 헤더
+                Container(
+                  width: double.infinity,
+                  height: 56,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  color: Colors.white,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // 달력 아이콘
-                      Container(
-                        width: 44.86,
-                        height: 29.19,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Icon(
-                          Icons.calendar_month,
-                          color: Color(0xFF78F200),
-                          size: 28,
+                      Text(
+                        '나의 냉장고',
+                        style: TextStyle(
+                          color: Color(0xFF111111),
+                          fontSize: 20,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(width: 17),
-                      // 텍스트 영역
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      GestureDetector(
+                        onTap: _showAddDialog,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              '유통기간이 임박한 식재료가 있어요!',
-                              style: TextStyle(
-                                color: Color(0xFF333333),
-                                fontSize: 16,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
+                            Container(
+                              width: 14.59,
+                              height: 14.59,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Color(0xFF111111),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.add,
+                                  size: 10,
+                                  color: Color(0xFF111111),
+                                ),
                               ),
                             ),
-                            SizedBox(height: 6),
+                            SizedBox(width: 5),
                             Text(
-                              '바로 확인하기 ->',
+                              '냉장고 만들기',
                               style: TextStyle(
-                                color: Color(0xFF4BB200),
-                                fontSize: 16,
+                                color: Color(0xFF111111),
+                                fontSize: 14,
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w400,
                               ),
@@ -618,121 +549,195 @@ class _FridgePageState extends State<FridgePage> {
                           ],
                         ),
                       ),
-                      // 닫기 버튼
-                      SizedBox(
-                        width: 13.18,
-                        height: 13.18,
-                        child: Icon(
-                          Icons.close,
-                          color: Color(0xFFAFB6C0),
-                          size: 13,
-                        ),
-                      ),
                     ],
                   ),
                 ),
-              ),
 
-            // 메인 콘텐츠 영역
-            Positioned(
-              left: 0,
-              top: hasNearExpiry ? 214.07 : 124.07, // 알림 배너 유무에 따라 위치 조정
-              child: Container(
-                width: 412,
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 섹션 타이틀
-                    Text(
-                      '내가 참여중인 냉장고',
-                      style: TextStyle(
-                        color: Color(0xFF111111),
-                        fontSize: 16,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                      ),
+                // 스크롤 가능한 본문 영역
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // 유통기한 임박 알림 배너 (조건부 렌더링)
+                        if (hasNearExpiry)
+                          Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.only(
+                              top: 20,
+                              left: 20,
+                              right: 20,
+                            ),
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF3F4F6),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                // 달력 아이콘
+                                Container(
+                                  width: 44.86,
+                                  height: 29.19,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Icon(
+                                    Icons.calendar_month,
+                                    color: Color(0xFF78F200),
+                                    size: 28,
+                                  ),
+                                ),
+                                SizedBox(width: 17),
+                                // 텍스트 영역
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '유통기간이 임박한 식재료가 있어요!',
+                                        style: TextStyle(
+                                          color: Color(0xFF333333),
+                                          fontSize: 16,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      SizedBox(height: 6),
+                                      Text(
+                                        '바로 확인하기 ->',
+                                        style: TextStyle(
+                                          color: Color(0xFF4BB200),
+                                          fontSize: 16,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // 닫기 버튼
+                                SizedBox(
+                                  width: 13.18,
+                                  height: 13.18,
+                                  child: Icon(
+                                    Icons.close,
+                                    color: Color(0xFFAFB6C0),
+                                    size: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        // 냉장고 영역
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 섹션 타이틀
+                              Text(
+                                '내가 참여중인 냉장고',
+                                style: TextStyle(
+                                  color: Color(0xFF111111),
+                                  fontSize: 16,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              // 냉장고 카드 그리드
+                              Wrap(
+                                spacing: 20,
+                                runSpacing: 20,
+                                children:
+                                    fridgeList.asMap().entries.map((entry) {
+                                      int index = entry.key;
+                                      Fridge fridge = entry.value;
+                                      return FridgeCard(
+                                        fridge: fridge,
+                                        onFavorite:
+                                            () => _toggleFavorite(index),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => FridgeDetailPage(
+                                                    fridge: fridge,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                        onMore: () {
+                                          _showMoreMenu(context, index);
+                                        },
+                                      );
+                                    }).toList(),
+                              ),
+
+                              // 하단 여백 추가 (네비게이션 바를 위한 공간)
+                              SizedBox(height: 70),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10),
-                    // 냉장고 카드 그리드
-                    SizedBox(
-                      width: 372,
-                      child: Wrap(
-                        spacing: 20,
-                        runSpacing: 20,
-                        children:
-                            fridgeList.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              Fridge fridge = entry.value;
-                              return FridgeCard(
-                                fridge: fridge,
-                                onFavorite: () => _toggleFavorite(index),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (_) =>
-                                              FridgeDetailPage(fridge: fridge),
-                                    ),
-                                  );
-                                },
-                                onMore: () {
-                                  _showMoreMenu(context, index);
-                                },
-                              );
-                            }).toList(),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
 
-            // 하단 네비게이션 바
+            // 상품 추가 버튼
             Positioned(
-              left: 0,
-              top: 833,
-              child: Container(
-                width: 412,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x0C000000),
-                      blurRadius: 4,
-                      offset: Offset(0, -4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    _NavItem(label: '나의 냉장고', isActive: true),
-                    _NavItem(label: '나눔 지도', isActive: false),
-                    _NavItem(label: '채팅', isActive: false),
-                    _NavItem(label: '나의 먹킵', isActive: false),
-                  ],
-                ),
-              ),
-            ),
-
-            // 하단 핸들
-            Positioned(
-              left: 0,
-              top: 893,
-              child: Container(
-                width: 412,
-                height: 24,
+              right: 20,
+              bottom: 80,
+              child: Material(
                 color: Colors.transparent,
-                child: Center(
-                  child: Container(
-                    width: 108,
-                    height: 4,
-                    margin: EdgeInsets.only(top: 10),
+                child: InkWell(
+                  onTap: () {
+                    // TODO: 상품 추가 기능
+                  },
+                  borderRadius: BorderRadius.circular(100),
+                  child: Ink(
                     decoration: BoxDecoration(
-                      color: Color(0xFF1D1B20),
-                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF4BB200), Color(0xFF89E119)],
+                      ),
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Icon(Icons.add, color: Colors.white, size: 24),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          '상품추가',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -907,43 +912,6 @@ class FridgeCard extends StatelessWidget {
   }
 }
 
-// 네비게이션 아이템
-class _NavItem extends StatelessWidget {
-  final String label;
-  final bool isActive;
-
-  const _NavItem({required this.label, required this.isActive});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 103,
-      height: 60,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 24,
-            height: 24,
-            // TODO: 실제 아이콘으로 교체
-          ),
-          SizedBox(height: 5),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Color(0xFF4BB200) : Color(0xFFA2A5AA),
-              fontSize: 11,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w500,
-              height: 0.91,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // 냉장고 상세 페이지
 class FridgeDetailPage extends StatefulWidget {
   final Fridge fridge;
@@ -969,7 +937,7 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
   }
 
   void _loadSampleItems() {
-    // 샘플 데이터 (실제로는 DB에서 가져올 예정)
+    // 샘플 데이터 (Figma와 일치하는 데이터)
     items = [
       FridgeItem(
         name: '저당 딸기잼 320g',
@@ -1018,86 +986,169 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // 냉장고 헤더
-            Container(
-              height: 56,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // 뒤로가기 버튼
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Text(
-                      '←',
-                      style: TextStyle(fontSize: 24, color: Color(0xFF111111)),
-                    ),
-                  ),
-
-                  // 냉장고 이름
-                  Row(
+            Column(
+              children: [
+                // 냉장고 헤더 (Figma 디자인에 맞게 수정)
+                Container(
+                  height: 56,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        widget.fridge.name,
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 24,
-                          color: Color(0xFF4BB200),
+                      // 뒤로가기 버튼
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Text(
+                          '←',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Color(0xFF111111),
+                          ),
                         ),
                       ),
-                      SizedBox(width: 10),
-                      Icon(Icons.keyboard_arrow_down, color: Color(0xFF4BB200)),
-                    ],
-                  ),
 
-                  // 사용자 추가 버튼
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person_add,
-                        color: Color(0xFF323232),
-                        size: 24,
-                      ),
-                      SizedBox(width: 10),
-                      Icon(Icons.menu, color: Color(0xFF111111), size: 16),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // 메인 컨텐츠
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // 상단 상태 카드 영역
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
+                      // 냉장고 이름
+                      Row(
                         children: [
-                          // 유통기한 임박 상품
-                          Expanded(
-                            child: Container(
-                              height: 41,
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Color(0xFFE6E6E6),
-                                  width: 1,
+                          Text(
+                            widget.fridge.name,
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 24,
+                              color: Color(0xFF4BB200),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Color(0xFF4BB200),
+                          ),
+                        ],
+                      ),
+
+                      // 사용자 추가 버튼 및 메뉴
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person_add,
+                            color: Color(0xFF323232),
+                            size: 24,
+                          ),
+                          SizedBox(width: 10),
+                          Icon(Icons.menu, color: Color(0xFF111111), size: 16),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 메인 컨텐츠
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // 상단 상태 카드 영역
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          child: Row(
+                            children: [
+                              // 유통기한 임박 상품
+                              Expanded(
+                                child: Container(
+                                  height: 41,
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Color(0xFFE6E6E6),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '유통기한 임박상품',
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: Color(0xFF111111),
+                                        ),
+                                      ),
+                                      Text(
+                                        '$nearExpiryCount',
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: Color(0xFF4BB200),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              SizedBox(width: 20),
+                              // 유통기한 만료상품
+                              Expanded(
+                                child: Container(
+                                  height: 41,
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Color(0xFFE6E6E6),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '유통기한 만료상품',
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: Color(0xFF111111),
+                                        ),
+                                      ),
+                                      Text(
+                                        '$expiredCount',
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: Color(0xFFFF6640),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // 정렬 옵션 & 필터
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // 상품 수
+                              Row(
                                 children: [
                                   Text(
-                                    '유통기한 임박상품',
+                                    '상품',
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w400,
@@ -1105,8 +1156,9 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
                                       color: Color(0xFF111111),
                                     ),
                                   ),
+                                  SizedBox(width: 5),
                                   Text(
-                                    '$nearExpiryCount',
+                                    '${items.length}',
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w400,
@@ -1116,28 +1168,12 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
-                          SizedBox(width: 20),
-                          // 유통기한 만료상품
-                          Expanded(
-                            child: Container(
-                              height: 41,
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Color(0xFFE6E6E6),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+
+                              // 정렬 옵션
+                              Row(
                                 children: [
                                   Text(
-                                    '유통기한 만료상품',
+                                    sortOption,
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontWeight: FontWeight.w400,
@@ -1145,113 +1181,64 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
                                       color: Color(0xFF111111),
                                     ),
                                   ),
-                                  Text(
-                                    '$expiredCount',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
-                                      color: Color(0xFFFF6640),
-                                    ),
+                                  SizedBox(width: 5),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Color(0xFF4BB200),
+                                    size: 12,
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // 정렬 옵션 & 필터
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // 상품 수
-                          Row(
-                            children: [
-                              Text(
-                                '상품',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: Color(0xFF111111),
-                                ),
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                '${items.length}',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: Color(0xFF4BB200),
-                                ),
-                              ),
                             ],
                           ),
+                        ),
 
-                          // 정렬 옵션
-                          Row(
-                            children: [
-                              Text(
-                                sortOption,
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: Color(0xFF111111),
-                                ),
+                        SizedBox(height: 10),
+
+                        // 식재료 리스트 (Figma 디자인에 맞게 수정)
+                        ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: items.length,
+                          separatorBuilder:
+                              (context, index) => SizedBox(height: 20),
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            final formattedDate = DateFormat(
+                              'yy.MM.dd',
+                            ).format(item.expiryDate);
+
+                            // Figma 디자인에 맞는 배경 이미지 가져오기
+                            String bgImagePath = '';
+                            if (item.daysUntilExpiry < 0) {
+                              bgImagePath = 'assets/images/pink_bg.png';
+                            } else if (item.daysUntilExpiry <= 3) {
+                              bgImagePath = 'assets/images/yellow_bg.png';
+                            } else if (item.daysUntilExpiry <= 7) {
+                              bgImagePath = 'assets/images/green_bg.png';
+                            } else {
+                              bgImagePath = 'assets/images/light_green_bg.png';
+                            }
+
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF3F4F6),
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                              SizedBox(width: 5),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Color(0xFF4BB200),
-                                size: 12,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 10),
-
-                    // 식재료 리스트
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: items.length,
-                      separatorBuilder:
-                          (context, index) => SizedBox(height: 20),
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        final dateFormat = DateFormat('yy.MM.dd');
-                        final formattedDate = dateFormat.format(
-                          item.expiryDate,
-                        );
-
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFF3F4F6),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Stack(
-                            children: [
-                              // 상품 정보
-                              Positioned(
-                                left: 20,
-                                top: 20,
-                                child: Row(
-                                  children: [
-                                    Column(
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  // 상품 정보
+                                  Positioned(
+                                    left: 20,
+                                    top: 20,
+                                    child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       children: [
+                                        // 상품명
                                         Text(
                                           item.name,
                                           style: TextStyle(
@@ -1261,8 +1248,9 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
                                             color: Colors.black,
                                           ),
                                         ),
-                                        SizedBox(height: 10),
-                                        // 수량 조절 영역
+                                        SizedBox(width: 10),
+
+                                        // 수량 조절 영역 - Figma 디자인에 맞게 이름 오른쪽으로 이동
                                         Row(
                                           children: [
                                             // 감소 버튼
@@ -1322,211 +1310,234 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
 
-                              // 유통기한 정보
-                              Positioned(
-                                left: 20,
-                                bottom: 20,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      formattedDate,
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                        color: Color(0xFF808080),
-                                      ),
-                                    ),
-                                    SizedBox(width: 3),
-                                    Text(
-                                      '까지',
-                                      style: TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                        color: Color(0xFF808080),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // 유통기한 상태 표시 바
-                              Positioned(
-                                left: 20,
-                                top: 82.5,
-                                child: Container(
-                                  width: 232,
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Color(0x40000000),
-                                      width: 0.5,
+                                  // 유통기한 정보
+                                  Positioned(
+                                    left: 20,
+                                    bottom: 10,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          formattedDate,
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: Color(0xFF808080),
+                                          ),
+                                        ),
+                                        SizedBox(width: 3),
+                                        Text(
+                                          '까지',
+                                          style: TextStyle(
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: Color(0xFF808080),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      // 상태 게이지
-                                      Container(
-                                        width: _getProgressWidth(
-                                          item.daysUntilExpiry,
-                                        ),
-                                        height: 10,
-                                        decoration: BoxDecoration(
-                                          color: item.statusColor,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.white.withOpacity(
-                                                0.2,
-                                              ),
-                                              blurRadius: 5,
-                                              spreadRadius: 0,
-                                              offset: Offset(0, 5),
+
+                                  // 유통기한 상태 표시 바 컨테이너
+                                  Positioned(
+                                    left: 20,
+                                    right: 20 + 80 + 20,
+                                    bottom: 35,
+                                    child: Container(
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.05,
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      // 중간점
-                                      Positioned(
-                                        left: 113.5,
-                                        top: 2.5,
-                                        child: Container(
-                                          width: 5,
-                                          height: 5,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            shape: BoxShape.circle,
+                                            blurRadius: 1,
+                                            offset: Offset(0, 0),
+                                            spreadRadius: 1,
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                      child: Stack(
+                                        alignment: Alignment.centerLeft,
+                                        children: [
+                                          // 상태 게이지 (Figma 디자인에 맞게 수정)
+                                          Container(
+                                            width: _getProgressWidthFigma(
+                                              item.daysUntilExpiry,
+                                            ),
+                                            height: 10,
+                                            decoration: BoxDecoration(
+                                              color: item.statusColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.white
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 5,
+                                                  offset: Offset(0, 5),
+                                                  spreadRadius: 0,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // 중간점
+                                          Positioned(
+                                            left: (232.0 / 2.0) - (5.0 / 2.0),
+                                            child: Container(
+                                              width: 5,
+                                              height: 5,
+                                              decoration: BoxDecoration(
+                                                color: Colors.black,
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                          ),
 
-                              // 남은 일수 뱃지
-                              Positioned(
-                                left: _getBadgeLeft(item.daysUntilExpiry),
-                                top: 70,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: item.badgeColor,
-                                    borderRadius: BorderRadius.circular(15),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0x40000000),
-                                        blurRadius: 1,
-                                        spreadRadius: 0,
-                                        offset: Offset(0, 0),
+                                          // 남은 일수 뱃지를 그래프 바 안에 배치
+                                          Positioned(
+                                            left:
+                                                _getBadgeLeftFigma(
+                                                  item.daysUntilExpiry,
+                                                ) -
+                                                20, // 왼쪽 패딩 보정
+                                            top: -22, // 그래프 바 위에 위치
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: item.badgeColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
+                                                    blurRadius: 3,
+                                                    offset: Offset(0, 1),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Text(
+                                                item.statusText,
+                                                style: TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 11,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  child: Text(
-                                    item.statusText,
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 11,
-                                      color: Colors.black,
                                     ),
                                   ),
-                                ),
-                              ),
 
-                              // 상품 이미지 영역
-                              Positioned(
-                                right: 20,
-                                top: 20,
-                                child: Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: item.tagColor,
-                                    borderRadius: BorderRadius.circular(20),
+                                  // 상품 이미지 영역 (더 명확하게 보이도록 스타일 수정)
+                                  Positioned(
+                                    right: 20,
+                                    top: 20,
+                                    child: Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ),
+                                            blurRadius: 4,
+                                            spreadRadius: 0,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                        image: DecorationImage(
+                                          image: AssetImage(bgImagePath),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Container(
+                                          color: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: 20),
-
-                    // 상품 추가 버튼
-                    Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            // TODO: 상품 추가 기능
+                            );
                           },
-                          borderRadius: BorderRadius.circular(100),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [Color(0xFF4BB200), Color(0xFF89E119)],
-                              ),
-                              borderRadius: BorderRadius.circular(100),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 10,
-                                  spreadRadius: 0,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 13,
-                              vertical: 12,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Text(
-                                  '상품추가',
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        ),
+
+                        // 하단 여백 추가 (FAB를 위한 공간)
+                        SizedBox(height: 80),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // 상품 추가 버튼 (Figma 디자인에 맞게 수정)
+            Positioned(
+              right: 20,
+              bottom: 20,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    // TODO: 상품 추가 기능
+                  },
+                  borderRadius: BorderRadius.circular(100),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF4BB200), Color(0xFF89E119)],
+                      ),
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Icon(Icons.add, color: Colors.white, size: 24),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          '상품추가',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white,
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -1536,24 +1547,66 @@ class _FridgeDetailPageState extends State<FridgeDetailPage> {
     );
   }
 
-  // 상태 게이지 너비 계산
-  double _getProgressWidth(int days) {
-    if (days < -10) return 20; // 최소값
-    if (days > 14) return 212; // 최대값
+  // Figma 디자인 기반으로 수정된 상태 게이지 너비 계산
+  double _getProgressWidthFigma(int days) {
+    // Figma 디자인 값 기준 (전체 너비 232px)
+    double totalWidth = 232.0;
 
-    // -10일부터 14일까지를 0-232 범위로 매핑
-    double position = (days + 10) / 24.0;
-    return 20 + position * 192;
+    // 특정 일수에 따른 너비 지정 (Figma에서 직접 측정한 값 기준)
+    if (days <= -10) return totalWidth * 0.05; // 최소 너비 (5%)
+    if (days >= 14) return totalWidth * 0.95; // 최대 너비 (95%)
+
+    // Figma에서 직접 측정한 특정 일수에 대한 너비값
+    if (days == -6) return 38.0; // Figma 디자인에서 측정한 -6일 위치
+    if (days == -2) return 77.0; // Figma 디자인에서 측정한 -2일 위치
+    if (days == 3) return 125.7; // Figma 디자인에서 측정한 3일 위치
+    if (days == 8) return 174.5; // Figma 디자인에서 측정한 8일 위치
+
+    // 중간값은 선형 보간법 사용
+    if (days < -6) {
+      // -10일 ~ -6일 사이
+      double ratio = (days + 10.0) / 4.0;
+      return 38.0 * ratio;
+    } else if (days < -2) {
+      // -6일 ~ -2일 사이
+      double ratio = (days + 6.0) / 4.0;
+      return 38.0 + (77.0 - 38.0) * ratio;
+    } else if (days < 3) {
+      // -2일 ~ 3일 사이
+      double ratio = (days + 2.0) / 5.0;
+      return 77.0 + (125.7 - 77.0) * ratio;
+    } else if (days < 8) {
+      // 3일 ~ 8일 사이
+      double ratio = (days - 3.0) / 5.0;
+      return 125.7 + (174.5 - 125.7) * ratio;
+    } else {
+      // 8일 ~ 14일 사이
+      double ratio = (days - 8.0) / 6.0;
+      return 174.5 + (totalWidth * 0.95 - 174.5) * ratio;
+    }
   }
 
-  // 일수 뱃지 위치 계산
-  double _getBadgeLeft(int days) {
-    double progressWidth = _getProgressWidth(days);
+  // Figma 디자인 기반으로 수정된 일수 뱃지 위치 계산
+  double _getBadgeLeftFigma(int days) {
+    // 그래프 시작 위치와 너비 가져오기
+    double graphStartX = 0.0; // 그래프 시작 X 좌표 (컨테이너 내부 기준)
+    double badgeWidth = 38.0; // 뱃지 너비 (Figma 기반)
 
-    // 뱃지가 화면 밖으로 나가지 않도록 조정
-    if (progressWidth < 40) return 20;
-    if (progressWidth > 192) return progressWidth - 20;
+    // 특정 일수에 대한 위치 (Figma에서 직접 측정)
+    if (days == -6) return graphStartX + 38.0 - badgeWidth / 2;
+    if (days == -2) return graphStartX + 77.0 - badgeWidth / 2;
+    if (days == 3) return graphStartX + 125.7 - badgeWidth / 2;
+    if (days == 8) return graphStartX + 174.5 - badgeWidth / 2;
 
-    return progressWidth - 20;
+    // 다른 일수에 대해서는 그래프 진행도에 맞춰 위치 계산
+    double progressWidth = _getProgressWidthFigma(days);
+    double badgePosition = graphStartX + progressWidth - (badgeWidth / 2);
+
+    // 뱃지가 화면을 벗어나지 않도록 조정
+    double graphContainerWidth = 232.0;
+    return badgePosition.clamp(
+      graphStartX,
+      graphStartX + graphContainerWidth - badgeWidth,
+    );
   }
 }

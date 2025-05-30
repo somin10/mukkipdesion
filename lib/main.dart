@@ -12,13 +12,13 @@ void main() async {
   if (!kIsWeb) {
     try {
       print('네이버 맵 SDK 초기화 시작');
-      // 네이버 맵 초기화 변경
+      // 네이버 맵 초기화
       await NaverMapSdk.instance.initialize(
         clientId: '1uae9g33a6',
         onAuthFailed: (error) {
           print('네이버 맵 인증 실패: $error');
         },
-      ); // 이전 방식으로 유지 (FlutterNaverMap().init()은 인스턴스 메소드)
+      );
       print('네이버 맵 SDK 초기화 성공');
     } catch (e) {
       print('네이버 맵 SDK 초기화 오류: $e');

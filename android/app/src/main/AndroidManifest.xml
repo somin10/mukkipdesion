@@ -4,8 +4,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="mukkip"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:name=".MultidexApplication"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
