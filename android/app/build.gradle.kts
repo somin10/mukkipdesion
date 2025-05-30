@@ -24,7 +24,7 @@ android {
         applicationId = "com.example.mukkip"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -42,6 +42,19 @@ android {
         debug {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+    
+    // Flutter가 기본적으로 찾는 위치로 APK 출력 설정
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            if (variant.buildType.name == "debug") {
+                output.outputFileName = "app-debug.apk"
+            } else {
+                output.outputFileName = "app-release.apk"
+            }
         }
     }
     
